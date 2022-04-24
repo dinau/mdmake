@@ -55,12 +55,16 @@ This will genarate **README.html** file.
 - Specify `*.md` files
 
   ```sh
-  mdmake [Markdown files]
+  mdmake Markdown file[s]
   ```
 
-- Specify folder names in `md-dir.list` file.  
-  All `*.md` files will be convert to html files in the directory that listed in `md-dir.list` file,  
-  then,
+- Specify Directories that include `*.md` files
+
+  ```sh
+  mdmake dir[s]
+  ```
+- Specify folder names in `mdmake.dir` file.  
+  All `*.md` files will be convert to html files in the directory that listed in `mdmake.dir` file.
 
   ```sh
   mdmake
@@ -86,7 +90,7 @@ This will generate `README.html` and `test.html`.
 
 | mdmake | [nim][lk_nim] | doctoc            | dos2unix |
 | :---:  | :------:      | :---:             | :---:    |
-| 0.6.0  | nim-1.6.5     | 2022/01 installed | -        |
+| 0.6.1  | nim-1.6.5     | 2022/01 installed | -        |
 
 [lk_mdcat]:https://github.com/calganaygun/MDcat
 [lk_nim]:https://nim-lang.org
