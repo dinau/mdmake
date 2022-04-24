@@ -13,6 +13,7 @@ proc getHashFileName(fname:string) : string
 
 # --- Global function
 #
+# Hashを作って保存
 proc saveHash*(mdfName:string): int =
     let hashDir = getHashDir()
     if not dirExists(hashDir): os.createDir(hashDir)
@@ -22,9 +23,8 @@ proc saveHash*(mdfName:string): int =
     writeFile(hashFileNameAbs,$result)
 
 # 拡張子を".has"に変えてそのファイルがhash/*.hasとして存在するか確認
-proc havehashFile*(fname:string):bool =
-    let res = getHashFileName(fname)
-    return fileExists res
+proc hashFileExists*(fname:string):bool =
+    return fileExists  getHashFileName(fname)
 
 proc isEqualHash*(fname:string):bool =
     let curHash = getContentHash(fname)
@@ -32,13 +32,13 @@ proc isEqualHash*(fname:string):bool =
 
     result =  (curHash == prevHash)
 
-
 # --- Local function
 #
 proc getHashFileName(fname:string) : string =
     var sTmp = changeFileExt(fname, "") # 拡張子をカット
     sTmp = os.absolutePath(sTmp)        # 絶対パス化
     let sHashId =  $(hash(sTmp)).uint   # 拡張子を除いた絶対パスをハッシュ化でIDとする
+    # 注: ハッシュフォルダのパスやその保存ドライブが変わると全ファイルが変更されたと見なされる
     #
     let paths = fname.splitFile()
     result = os.joinPath(getHashDir(), paths.name & "-" & sHashId ) & ".has"
@@ -53,7 +53,7 @@ proc getHashDir() : string =
 proc getSavedHash(fname:string): int =
     let hashFileNameAbs = getHashFileName(fname)
     if not fileExists(hashFileNameAbs):
-        discard saveHash(fname)
+        #discard saveHash(fname)
         result = 0
     else:
         result = parseInt readFile(hashFileNameAbs)
