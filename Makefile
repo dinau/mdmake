@@ -21,9 +21,13 @@ $(TARGET)$(EXE): $(SRCS) config.nims Makefile
 
 TC = gcc
 NIMCACHE = .nimcache
+
 clean:
-	rm -fr $(NIMCACHE)_$(TC)
-	rm $(TARGET)$(EXE)
+	-rm -fr $(NIMCACHE)_$(TC)
+	-rm $(TARGET)$(EXE)
+	-rm README.html
+	-rm test_dir1/*.html
+	-rm test_dir2/*.html
 
 rel:
 	cp src/*.nim    $(GITHUB_REPO)/src/
@@ -33,3 +37,6 @@ rel:
 	cp README.md    $(GITHUB_REPO)/
 	cp .gitignore   $(GITHUB_REPO)/
 	cp setenv.bat   $(GITHUB_REPO)/
+	cp *.dll        $(GITHUB_REPO)/
+	cp cacert.pem   $(GITHUB_REPO)/
+

@@ -7,8 +7,8 @@ const HASH_DIR = "hash"
 # --- Forward definition
 #
 proc getHashDir() : string
-proc getContentHash(fname:string): int
-proc getSavedHash(fname:string): int
+proc getContentHash*(fname:string): int
+proc getSavedHash*(fname:string): int
 proc getHashFileName(fname:string) : string
 
 # --- Global function

@@ -55,6 +55,9 @@ proc conv2html(mdname: string): bool = # True: HTMLに変換した , False: 未�
         else:
             seqMsg.add"Htmlなし"
 
+        seqMsg.add("   現在のファイルのHash値: " & $getContentHash(mdname))
+        seqMsg.add("   保存されていたHash値: " & $getSavedHash(mdname))
+
     ################
     # mdファイルの最初に見つかった #.. 行をhtmlのタイトルとして取得する
     ################
@@ -82,7 +85,7 @@ proc conv2html(mdname: string): bool = # True: HTMLに変換した , False: 未�
                 # 絶対パス化 *.mdファイルと同じフォルダとする
                 sIncName = os.joinPath(paths.dir , sIncName)
                 if fileExists(sIncName):
-                    sMd &= readfile(sIncName)
+                    sMd &= readfile(sIncName) # Includeファイルの中身を結合
             else:
                 sMd &= line & '\n'
         writeFile(MD_TEMP_FILENAME,sMd)
@@ -108,7 +111,7 @@ proc conv2html(mdname: string): bool = # True: HTMLに変換した , False: 未�
     if sHtml == "":
         echo "\n -- [ERROR:Server error !!! ] ---: ", MD_TEMP_FILENAME
         return false
-
+    os.removeFile(MD_TEMP_FILENAME)
     ################
     # html: 一旦ファイルに保存(dos2unixをかけるため)
     ################
@@ -128,7 +131,9 @@ proc conv2html(mdname: string): bool = # True: HTMLに変換した , False: 未�
     # mdファイルはこれ以降変更されない
     ###################################
     discard saveHash(mdFilename) # mdファイルのHashを作って保存
-    seqMsg.add "Hashを作って保存した"
+    seqMsg.add "       Hashを作って保存した"
+    seqMsg.add("       現在のファイルのHash値: " & $getContentHash(mdname))
+    seqMsg.add("       保存されていたHash値: " & $getSavedHash(mdname))
     # デバッグ用出力
     when DEBUG:
         for str in seqMsg: echo str

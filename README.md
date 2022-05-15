@@ -25,7 +25,6 @@
 
 ---
 
-1. Python 3.x or later
 1. [doctoc](https://github.com/thlorenz/doctoc) : Index(TOC) generator
 
     ```
@@ -70,7 +69,7 @@ This will genarate **README.html** file.
   ```
 
 - Specify directory names in `mdmake.dir` file.  
-  All `*.md` files will be convert to html files in the directory that listed in `mdmake.dir` file.
+  All `*.md` files will be convert to html files in the directory that listed in `mdmake.dir` file.(Not recursive)
 
   ```sh
   mdmake
@@ -99,7 +98,8 @@ This will generate `README.html` and `test.html`.
 
 | [nim][lk_nim] | doctoc            | dos2unix |
 | :------:      | :---:             | :---:    |
-| nim-1.6.5     | 2022/01 installed | -        |
+| nim-1.6.6     | 2022/01 installed | -        |
 
 [lk_mdcat]:https://github.com/calganaygun/MDcat
 [lk_nim]:https://nim-lang.org
+

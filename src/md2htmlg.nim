@@ -4,12 +4,12 @@
 include std/prelude
 import std/[ httpclient, json]
 
-const URL = "https://api.github.com/markdown"
-const HEADER = {"Accept": "application/vnd.github.v3+json",
-                 "Content-Type": "application/json"}
 ################
 ## md2htmlg()
 ################
+const URL = "https://api.github.com/markdown"
+const HEADER = {"Accept": "application/vnd.github.v3+json",
+                 "Content-Type": "application/json"}
 proc md2htmlg*(sMdFile:string):string =
     # HTTP request
     let client = newHttpClient()
