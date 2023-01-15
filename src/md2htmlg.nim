@@ -1,20 +1,55 @@
+# 2022/12: Added: Puppy library
 # 2022/01 by audin
-#
-{.push warning[UnusedImport]: off.}
-include std/prelude
-import std/[ httpclient, json]
 
-################
-## md2htmlg()
-################
+import std/[json,os,strutils]
+
+const UsePuppyLib* {.booldefine.}: bool = true
+
+# Github GFM API: Makdown to Html Converter
 const URL = "https://api.github.com/markdown"
-const HEADER = {"Accept": "application/vnd.github.v3+json",
+
+######################
+## Using Puppy library
+######################
+import puppy
+var header1 =  @[Header(key:"Accept"      ,value:"application/vnd.github.v3+json"),
+                 Header(key:"Content-Type",value:"application/json"), ]
+
+const ACSTokenFile = "githubAccessToken.token"
+if fileExists(ACSTokenFile):
+    for line in lines(ACSTokenFile):
+        let sLine = line.strip
+        if (sLine == "") or (sLine[0] == '#'): break
+        let sAcsToken = "bearer " &  sLine
+        header1.add Header(key:"Authorization:", value:"\"$#\"" % [sAcsToken])
+        break # only get first line
+
+proc md2htmlPuppy*(sMdFile:string):string =
+    let req = Request( # HTTP request
+        url: parseUrl(URL),
+        verb: "post",
+        body: $(%*{"text": sMdFile}),
+        headers: header1
+    )
+    let res = fetch(req)
+    if res.code == 200:
+        result = res.body
+    else:
+        echo "Server response error !! ", res.body
+        result = ""
+
+#####################
+## Using Std library
+#####################
+import std/[httpclient]
+const HEADER2 = {"Accept": "application/vnd.github.v3+json",
                  "Content-Type": "application/json"}
+
 proc md2htmlg*(sMdFile:string):string =
-    # HTTP request
     let client = newHttpClient()
-    client.headers = newHttpHeaders(HEADER)
+    client.headers = newHttpHeaders(HEADER2)
     let body = %*{"text": sMdFile}
+    # HTTP request
     let response = client.request(URL, httpMethod = HttpPost, body = $body)
     if response.status == "200 OK":
         result = response.body
@@ -22,12 +57,14 @@ proc md2htmlg*(sMdFile:string):string =
         echo "Server response error !! ", response.status
         result = ""
 
+#####################
+## main()
+#####################
 
 when isMainModule:
-    ################
-    ## test_main()
-    ################
-    import std/pegs
+    import std/[pegs]
+    import template_mdmake
+
     let html4header = """
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
     <html><head>
@@ -36,39 +73,35 @@ when isMainModule:
     let htmlEnd = """
     </html>
     """
-    const POSTFIX = "-md2htmlg"
-    const TEMPLATE = "template.html"
-
-    proc test_main() =
+    proc main() =
         if os.paramCount() < 1:
             echo "Argument error !!! Specify *.md file name"
-            echo "Markdown converter to Html file"
-            echo "\nUsage:"
-            echo "\n  $ md2htmlg [*.md files]"
             quit 1
         # *.mdファイルをコマンドライン引数から取得
-        for arg in os.commandLineParams():
-            let mdFilename = absolutePath(arg)
-            if not os.fileExists(mdFilename):
-                echo "!Error ファイルがありません [$#]" % [mdFilename]
-                continue
-            # 最初に見つかった1つ以上の"#"のあとをタイトル文字列とする
-            var sTitle = ""
-            var mc:array[1,string]
-            for line in lines(mdFilename):
-                if line.contains(peg(" '#'+ ' ' {.+}"),mc):
-                    sTitle = mc[0]
-                    break
-            let paths = mdFilename.splitFile
-            let sHtml = md2htmlg(readFile(mdFilename))
-            let saveName = os.joinPath(paths.dir, paths.name & POSTFIX & ".html")
-            if fileExists(TEMPLATE):
-                let str = html4header & readFile(TEMPLATE)
-                    .replace("$MD_HTML",sHtml)
-                    .replace("$MD_TITLE",sTitle) & htmlEnd
-                writeFile(saveName,str)
-            else:
-                writeFile(saveName,sHtml)
+        let mdFilename = os.commandLineParams()[0]
+        if not os.fileExists(mdFilename):
+            echo "!Error ファイルがありません [$#]" % [mdFilename]
+            quit 1
+        # 最初に見つかった1つ以上の"#"のあとをタイトル文字列とする
+        # (後でHTMLファイルに埋め込む)
+        let sMdFile = readFile(mdFilename)
+        var sTitle = ""
+        if  sMdFile =~ peg"@ '#'+ \s+ {@} \n ":
+            sTitle = matches[0]
+        when UsePuppyLib:
+            let sHtml = md2htmlPuppy(sMdFile)
+        else:
+            let sHtml = md2htmlg(sMdFile)
+        # HTMLひな形に埋め込む
+        let str = html4header & TEMPLATE
+                .replace("$MD_HTML",sHtml)
+                .replace("$MD_TITLE",sTitle) & htmlEnd
+        # Convert *.md to *.html
+        let saveName = changefileExt(mdfilename,".html")
+        writeFile(saveName,str)
 
-    test_main()
+    ###########
+    # main()
+    ###########
+    main()
 

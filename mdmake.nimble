@@ -12,6 +12,14 @@ bin           = @["mdmake"]
 
 requires "nim >= 1.6.2"
 
+const UsePuppyLib = true
+
+when UsePuppyLib:
+    requires "puppy >= 1.6.2"
+    switch "define","UsePuppyLib=$#" % [$UsePuppyLib]
+else:
+    switch "define","ssl"
+
 task sample,"run":
     exec "./mdmake " & "README.md"
 

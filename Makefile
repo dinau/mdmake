@@ -6,6 +6,7 @@ ifeq ($(OS),Windows_NT)
 endif
 
 all:$(TARGET)$(EXE)
+	@strings $(TARGET)$(EXE) | rg -i \.dll
 	./$<
 
 SRCS += src/mdmake.nim
@@ -14,29 +15,34 @@ SRCS += src/md2htmlg.nim
 SRCS += src/template_mdmake.nim
 
 $(TARGET)$(EXE): $(SRCS) config.nims Makefile
-	nim c  -o:$@ src/$(TARGET)
-	#nimble build
+	@#nim c  -o:$@ src/$(TARGET)
+	nimble build
 
 .PHONEY:clean rel
 
-TC = gcc
 NIMCACHE = .nimcache
 
 clean:
-	-rm -fr $(NIMCACHE)_$(TC)
 	-rm $(TARGET)$(EXE)
 	-rm README.html
 	-rm test_dir1/*.html
 	-rm test_dir2/*.html
+	-rm -fr .nimcache_*
 
 rel:
-	cp src/*.nim    $(GITHUB_REPO)/src/
-	cp config.nims 	$(GITHUB_REPO)/
-	cp Makefile     $(GITHUB_REPO)/
-	cp LICENSE      $(GITHUB_REPO)/
-	cp README.md    $(GITHUB_REPO)/
-	cp .gitignore   $(GITHUB_REPO)/
-	cp setenv.bat   $(GITHUB_REPO)/
-	cp *.dll        $(GITHUB_REPO)/
-	cp cacert.pem   $(GITHUB_REPO)/
+	-rm -f  $(GITHUB_REPO)/config.nims
+	-rm -f	$(GITHUB_REPO)/LICENSE
+	-rm -f	$(GITHUB_REPO)/Makefile
+	-rm -f	$(GITHUB_REPO)/README.md
+	-rm -f  $(GITHUB_REPO)/src/*
+	-cp src/*.nim    $(GITHUB_REPO)/src/
+	-cp config.nims  $(GITHUB_REPO)/
+	-cp Makefile     $(GITHUB_REPO)/
+	-cp LICENSE      $(GITHUB_REPO)/
+	-cp README.md    $(GITHUB_REPO)/
+	-cp .gitignore   $(GITHUB_REPO)/
+	-cp setenv.bat   $(GITHUB_REPO)/
+	-cp *.nimble     $(GITHUB_REPO)/
 
+dlls: all
+	@strings $(TARGET)$(EXE) | rg -i \.dll

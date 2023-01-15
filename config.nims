@@ -2,13 +2,14 @@ var TC = "gcc"
 #var TC = "clang"
 #var TC = "tcc"
 
+const LTO = false
+
 proc commonOpt() =
     switch "passC","-ffunction-sections"
     switch "passC","-fdata-sections"
     switch "passC","-Wl,--gc-sections"
 
-switch "d","danger"
-switch "d","ssl"
+switch "define","danger"
 
 switch "passL","-s"
 switch "opt","size"
@@ -20,7 +21,7 @@ switch "nimcache",NIMCACHE
 case TC
     of "gcc":
         commonOpt()
-        when true : # These options let linking time slow instead of reducing code size.
+        when LTO : # These options let linking time slow instead of reducing code size.
             switch "passC","-flto"
             switch "passL","-flto"
     of "clang":
@@ -28,4 +29,4 @@ case TC
 
 
 switch "cc" ,TC
-echo "Compiler: ",TC
+echo "### Compiler: ",TC," ###"
