@@ -240,7 +240,9 @@ proc main() =
     var
         mdFileList: seq[string] # *.mdファイルのリストを保持
         mdDirList: seq[string]  # *.mdファイルがあるフォルダのリストを保持
-        tDelay = 0 # [msec] 連続処理するとサーバに蹴られるのでテキトーなウエイトを入れる
+        tDelay = 1 # [msec] 連続処理するとサーバに蹴られるのでテキトーなウエイトを入れる
+                   # 連続禁止じゃなくて認証未登録の場合,1時間当たり60個までの様だ
+                   # 登録すれば 5000個/h らしい
     if os.paramCount() > 0:
         # *.mdファイルとディレクトリをコマンドライン引数から取得
         for file in os.commandLineParams():
@@ -262,6 +264,7 @@ proc main() =
         if mdFileList.len <= 2: # 2個までは連続処理してみる
             tDelay = 0 # No wait
     var seqOkList: seq[string]
+    let total = mdFileList.len
     for fname in mdFileList:
         when UsePeg:
             if fname.splitFile.name =~ peg"@ 'mail' @$":
@@ -274,12 +277,11 @@ proc main() =
                 continue
         if conv2html(fname):
             echo fname
-            #seqOkList.add fname
             inc(genCount)
             sleep(tDelay)
     for fname in seqOkList:
             echo fname
-    echo "Generated count = ", genCount
+    echo "Generated count = $#/$#" % [$genCount, $total]
 
 main()
 
