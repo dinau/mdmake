@@ -1,19 +1,25 @@
-## 入力の*.mdファイルはUTF-8/LF(Unix)が前提
-##
-## 最初に見つかった "#"で始まる 行をタイトル文字列とする
+# Mdmake -- *.md ファイルを .htmlファイルに変化するコンバータ
+# 入力の*.mdファイルはUTF-8/LF(Unix)が前提
+# 最初に見つかった "#"で始まる 行をタイトル文字列とする
+#
 # first:2021/12 by audin
 # nim-1.6.2
 
 const DEBUG = false
 const UsePeg = true
 
-const MD_FILENAME_OF_DIR_LIST= "mdmake.dir"
-const MD_TEMP_FILENAME = "00temp.md" # *.exeがあるフォルダに生成される
-
 when UsePeg: import pegs else: import strscans
 import std/[os,strutils,osproc]
 import md2htmlg, hashlib
 import template_mdmake # $MD_TITLE $MD_HTML
+
+const VERSION {.strdefine.}: string = "ERROR:unkonwn version"
+const REL_DATE {.strdefine.}: string = "ERROR:unkonwn release date"
+
+echo "[ Mdmake v$# --- $# ]" % [VERSION,REL_DATE]
+
+const MD_FILENAME_OF_DIR_LIST= "mdmake.dir"
+const MD_TEMP_FILENAME = "00temp.md" # *.exeがあるフォルダに生成される
 
 when defined(windows):
     const cmdDoctoc = "doctoc.cmd"

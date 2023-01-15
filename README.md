@@ -98,7 +98,7 @@ This will generate `README.html` and `test.html`.
 
 | [nim][lk_nim] | doctoc            | dos2unix |
 | :------:      | :---:             | :---:    |
-| nim-1.6.6     | 2022/01 installed | -        |
+| nim-1.6.10    | 2022/01 installed | -        |
 
 [lk_mdcat]:https://github.com/calganaygun/MDcat
 [lk_nim]:https://nim-lang.org
