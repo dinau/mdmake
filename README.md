@@ -9,6 +9,7 @@
   - [Usage](#usage)
   - [Example](#example)
   - [Referenced from](#referenced-from)
+  - [Important notice](#important-notice)
   - [Version info](#version-info)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -91,6 +92,13 @@ This will generate `README.html` and `test.html`.
 
 1. [MDcat][lk_mdcat]: Markdown converter  
   The `template_mdmake.nim` file used by this project is equal to MDcat `template.html` file.
+
+#### Important Notice
+
+---
+
+All \*.md file datas are send to github server to be converted to html file,  
+so you shouldn't use `mdmake` for your private contents.
 
 #### Version info
 
