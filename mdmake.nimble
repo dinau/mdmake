@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.9.0"
+version       = "0.9.1"
 author        = "dinau"
 description   = "Converter of markdown file to html file for my blog page"
 license       = "MIT"
